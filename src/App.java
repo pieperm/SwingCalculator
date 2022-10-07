@@ -49,35 +49,51 @@ public class App extends JFrame {
         contentPanel.add(quotientLabel, gridConstraints);
     }
 
+    private void calculate() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        double numerator;
+        double denominator;
+        try {
+            numerator = Double.parseDouble(numeratorTextField.getText());
+            denominator = Double.parseDouble(denominatorTextField.getText());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            SwingUtilities.invokeLater(() -> {
+                quotientLabel.setForeground(Color.RED);
+                quotientLabel.setText("Error");
+            });
+            return;
+        }
+
+        if (denominator == 0) {
+            SwingUtilities.invokeLater(() -> {
+                quotientLabel.setForeground(Color.RED);
+                quotientLabel.setText("Cannot divide by 0");
+            });
+            return;
+        }
+
+        double quotient = numerator / denominator;
+
+        SwingUtilities.invokeLater(() -> {
+            quotientLabel.setForeground(Color.BLACK);
+            quotientLabel.setText(String.valueOf(quotient));
+        });
+    }
+
     private void createButtonListener() {
         divideButton.addActionListener((event) -> {
             if (numeratorTextField.getText().isBlank() || denominatorTextField.getText().isBlank()) {
-                quotientLabel.setText("");
+                SwingUtilities.invokeLater(() -> quotientLabel.setText(""));
                 return;
             }
 
-            double numerator;
-            double denominator;
-            try {
-                numerator = Double.parseDouble(numeratorTextField.getText());
-                denominator = Double.parseDouble(denominatorTextField.getText());
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                quotientLabel.setForeground(Color.RED);
-                quotientLabel.setText("Error");
-                return;
-            }
-
-            if (denominator == 0) {
-                quotientLabel.setForeground(Color.RED);
-                quotientLabel.setText("Cannot divide by 0");
-                return;
-            }
-
-            double quotient = numerator / denominator;
-
-            quotientLabel.setForeground(Color.BLACK);
-            quotientLabel.setText(String.valueOf(quotient));
+            calculate();
         });
     }
 
@@ -96,7 +112,7 @@ public class App extends JFrame {
     public static void main(String[] args) {
         System.out.println("Running Swing application...");
         App app = new App();
-        app.setVisible(true);
+        SwingUtilities.invokeLater(() -> app.setVisible(true));
     }
 
 }
