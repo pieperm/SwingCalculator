@@ -50,12 +50,17 @@ public class App extends JFrame {
     }
 
     private void calculate() {
-        // artificial delay to simulate a longer calculation and to expose a problem...
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        quotientLabel.setForeground(Color.GRAY);
+        quotientLabel.setText("...");
+
+        // artificial delay to simulate a longer calculation
+        SwingUtilities.invokeLater(() -> {
+            try {
+                Thread.sleep(4000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
 
         double numerator;
         double denominator;
