@@ -100,10 +100,7 @@ public class App extends JFrame {
         try {
             firstNumber = Double.parseDouble(firstNumberTextField.getText());
         } catch (NumberFormatException e) {
-            SwingUtilities.invokeLater(() -> {
-                resultLabel.setForeground(Color.RED);
-                resultLabel.setText("Numerator is not a number");
-            });
+            displayError("First input is invalid");
             return;
         }
 
@@ -111,10 +108,7 @@ public class App extends JFrame {
         try {
             secondNumber = Double.parseDouble(secondNumberTextField.getText());
         } catch (NumberFormatException e) {
-            SwingUtilities.invokeLater(() -> {
-                resultLabel.setForeground(Color.RED);
-                resultLabel.setText("Denominator is not a number");
-            });
+            displayError("Second input is invalid");
             return;
         }
 
