@@ -110,7 +110,9 @@ public class App extends JFrame {
             //TODO what if I'm already on the EDT?
             // if (EventQueue.isDispatchThread()) {...}
             // HINT: notice that the button appears pressed in and never pops back out...it looks stuck...
-            calculate();
+            if (EventQueue.isDispatchThread()) {
+                calculate();
+            }
         });
     }
 
