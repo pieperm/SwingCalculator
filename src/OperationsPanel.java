@@ -7,12 +7,14 @@ public class OperationsPanel extends JPanel {
     private JButton subtractButton;
     private JButton multiplyButton;
     private JButton divideButton;
+    private ButtonGroup buttonGroup;
     private Operation selectedOperation;
 
     public OperationsPanel() {
         super();
         createContent();
         createLayout();
+        createListeners();
     }
 
     private void createContent() {
@@ -20,10 +22,15 @@ public class OperationsPanel extends JPanel {
         subtractButton = new JButton("-");
         multiplyButton = new JButton("*");
         divideButton = new JButton("÷");
+        buttonGroup = new ButtonGroup();
+
+        buttonGroup.add(addButton);
+        buttonGroup.add(subtractButton);
+        buttonGroup.add(multiplyButton);
+        buttonGroup.add(divideButton);
     }
 
     private void createLayout() {
-        GridBagLayout layout = new GridBagLayout();
         GridBagConstraints gridConstraints = new GridBagConstraints();
         gridConstraints.fill = GridBagConstraints.HORIZONTAL;
 
@@ -46,6 +53,24 @@ public class OperationsPanel extends JPanel {
         gridConstraints.gridy = 0;
         gridConstraints.gridwidth = 1;
         this.add(divideButton, gridConstraints);
+    }
+
+    private void createOperationListener(JButton button, Operation operation) {
+        button.addActionListener((event) -> {
+            this.selectedOperation = operation;
+            buttonGroup.setSelected(button.getModel(), true);
+        });
+    }
+
+    private void createListeners() {
+        createOperationListener(addButton, Operation.ADD);
+        createOperationListener(subtractButton, Operation.SUBTRACT);
+        createOperationListener(multiplyButton, Operation.MULTIPLY);
+        createOperationListener(divideButton, Operation.DIVIDE);
+    }
+
+    public Operation getSelectedOperation() {
+        return selectedOperation;
     }
 
 }
