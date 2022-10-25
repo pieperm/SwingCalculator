@@ -50,6 +50,7 @@ public class App extends JFrame {
     }
 
     private void calculate() {
+        // artificial delay to simulate a longer calculation and to expose a problem...
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -65,11 +66,17 @@ public class App extends JFrame {
             e.printStackTrace();
             SwingUtilities.invokeLater(() -> {
                 quotientLabel.setForeground(Color.RED);
+                //TODO which field has the error?  what is nature of error?
                 quotientLabel.setText("Error");
             });
             return;
         }
 
+        //TODO this compares the double variable denominator to the integer literal zero, which is
+        //  promoted to double 0.0.  We can go ahead and make the literal a double as follows:
+        // if (denominator == 0d) //explicit double
+        // -or-
+        // if (denominator == 0.0) //implicit double
         if (denominator == 0) {
             SwingUtilities.invokeLater(() -> {
                 quotientLabel.setForeground(Color.RED);
@@ -78,6 +85,9 @@ public class App extends JFrame {
             return;
         }
 
+        //TODO how should we handle if user types in "NaN" for either value?  "Infinity" or "-Infinity"?
+        // if (Double.isNaN(foo)) {...}
+        // if (Double.isInfinite(foo)) {...}
         double quotient = numerator / denominator;
 
         SwingUtilities.invokeLater(() -> {
@@ -93,6 +103,9 @@ public class App extends JFrame {
                 return;
             }
 
+            //TODO what if I'm already on the EDT?
+            // if (EventQueue.isDispatchThread()) {...}
+            // HINT: notice that the button appears pressed in and never pops back out...it looks stuck...
             calculate();
         });
     }
