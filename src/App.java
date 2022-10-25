@@ -63,16 +63,23 @@ public class App extends JFrame {
         });
 
         double numerator;
-        double denominator;
         try {
             numerator = Double.parseDouble(numeratorTextField.getText());
-            denominator = Double.parseDouble(denominatorTextField.getText());
         } catch (NumberFormatException e) {
-            e.printStackTrace();
             SwingUtilities.invokeLater(() -> {
                 quotientLabel.setForeground(Color.RED);
-                //TODO which field has the error?  what is nature of error?
-                quotientLabel.setText("Error");
+                quotientLabel.setText("Numerator is not a number");
+            });
+            return;
+        }
+
+        double denominator;
+        try {
+            denominator = Double.parseDouble(denominatorTextField.getText());
+        } catch (NumberFormatException e) {
+            SwingUtilities.invokeLater(() -> {
+                quotientLabel.setForeground(Color.RED);
+                quotientLabel.setText("Denominator is not a number");
             });
             return;
         }
