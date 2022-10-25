@@ -77,6 +77,13 @@ public class App extends JFrame {
     private void calculate() {
         Operation selectedOperation = operationsPanel.getSelectedOperation();
 
+        // artificial delay to simulate a longer calculation and to expose a problem...
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // Get numbers from input fields
         double firstNumber;
         double secondNumber;
@@ -84,7 +91,12 @@ public class App extends JFrame {
             firstNumber = Double.parseDouble(firstNumberTextField.getText());
             secondNumber = Double.parseDouble(secondNumberTextField.getText());
         } catch (NumberFormatException e) {
-            displayError("Input error");
+            e.printStackTrace();
+            SwingUtilities.invokeLater(() -> {
+                resultLabel.setForeground(Color.RED);
+                //TODO which field has the error?  what is nature of error?
+                resultLabel.setText("Error");
+            });
             return;
         }
 
