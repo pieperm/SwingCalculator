@@ -92,9 +92,6 @@ public class App extends JFrame {
             return;
         }
 
-        //TODO how should we handle if user types in "NaN" for either value?  "Infinity" or "-Infinity"?
-        // if (Double.isNaN(foo)) {...}
-        // if (Double.isInfinite(foo)) {...}
         double quotient = numerator / denominator;
 
         SwingUtilities.invokeLater(() -> {
