@@ -84,12 +84,7 @@ public class App extends JFrame {
             return;
         }
 
-        //TODO this compares the double variable denominator to the integer literal zero, which is
-        //  promoted to double 0.0.  We can go ahead and make the literal a double as follows:
-        // if (denominator == 0d) //explicit double
-        // -or-
-        // if (denominator == 0.0) //implicit double
-        if (denominator == 0) {
+        if (denominator == 0d) {
             SwingUtilities.invokeLater(() -> {
                 quotientLabel.setForeground(Color.RED);
                 quotientLabel.setText("Cannot divide by 0");
