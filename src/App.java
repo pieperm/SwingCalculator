@@ -64,7 +64,14 @@ public class App extends JFrame {
     }
 
     private void createListeners() {
-        equalsButton.addActionListener((event) -> calculate());
+        equalsButton.addActionListener((event) -> {
+            //TODO what if I'm already on the EDT?
+            // if (EventQueue.isDispatchThread()) {...}
+            // HINT: notice that the button appears pressed in and never pops back out...it looks stuck...
+            if (EventQueue.isDispatchThread()) {
+                calculate();
+            }
+        });
     }
 
     private void displayError(String message, Object... args) {
@@ -77,25 +84,36 @@ public class App extends JFrame {
     private void calculate() {
         Operation selectedOperation = operationsPanel.getSelectedOperation();
 
-        // artificial delay to simulate a longer calculation and to expose a problem...
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        resultLabel.setForeground(Color.GRAY);
+        resultLabel.setText("...");
 
-        // Get numbers from input fields
+        // artificial delay to simulate a longer calculation
+        SwingUtilities.invokeLater(() -> {
+            try {
+                Thread.sleep(4000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
         double firstNumber;
-        double secondNumber;
         try {
             firstNumber = Double.parseDouble(firstNumberTextField.getText());
-            secondNumber = Double.parseDouble(secondNumberTextField.getText());
         } catch (NumberFormatException e) {
-            e.printStackTrace();
             SwingUtilities.invokeLater(() -> {
                 resultLabel.setForeground(Color.RED);
-                //TODO which field has the error?  what is nature of error?
-                resultLabel.setText("Error");
+                resultLabel.setText("Numerator is not a number");
+            });
+            return;
+        }
+
+        double secondNumber;
+        try {
+            secondNumber = Double.parseDouble(secondNumberTextField.getText());
+        } catch (NumberFormatException e) {
+            SwingUtilities.invokeLater(() -> {
+                resultLabel.setForeground(Color.RED);
+                resultLabel.setText("Denominator is not a number");
             });
             return;
         }
@@ -106,7 +124,7 @@ public class App extends JFrame {
             case SUBTRACT -> result = firstNumber - secondNumber;
             case MULTIPLY -> result = firstNumber * secondNumber;
             case DIVIDE -> {
-                if (secondNumber == 0) {
+                if (secondNumber == 0d) {
                     displayError("Cannot divide by 0");
                     return;
                 }
