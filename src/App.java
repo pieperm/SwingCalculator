@@ -50,34 +50,41 @@ public class App extends JFrame {
     }
 
     private void calculate() {
-        // artificial delay to simulate a longer calculation and to expose a problem...
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        quotientLabel.setForeground(Color.GRAY);
+        quotientLabel.setText("...");
+
+        // artificial delay to simulate a longer calculation
+        SwingUtilities.invokeLater(() -> {
+            try {
+                Thread.sleep(4000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
 
         double numerator;
-        double denominator;
         try {
             numerator = Double.parseDouble(numeratorTextField.getText());
-            denominator = Double.parseDouble(denominatorTextField.getText());
         } catch (NumberFormatException e) {
-            e.printStackTrace();
             SwingUtilities.invokeLater(() -> {
                 quotientLabel.setForeground(Color.RED);
-                //TODO which field has the error?  what is nature of error?
-                quotientLabel.setText("Error");
+                quotientLabel.setText("Numerator is not a number");
             });
             return;
         }
 
-        //TODO this compares the double variable denominator to the integer literal zero, which is
-        //  promoted to double 0.0.  We can go ahead and make the literal a double as follows:
-        // if (denominator == 0d) //explicit double
-        // -or-
-        // if (denominator == 0.0) //implicit double
-        if (denominator == 0) {
+        double denominator;
+        try {
+            denominator = Double.parseDouble(denominatorTextField.getText());
+        } catch (NumberFormatException e) {
+            SwingUtilities.invokeLater(() -> {
+                quotientLabel.setForeground(Color.RED);
+                quotientLabel.setText("Denominator is not a number");
+            });
+            return;
+        }
+
+        if (denominator == 0d) {
             SwingUtilities.invokeLater(() -> {
                 quotientLabel.setForeground(Color.RED);
                 quotientLabel.setText("Cannot divide by 0");
@@ -85,9 +92,6 @@ public class App extends JFrame {
             return;
         }
 
-        //TODO how should we handle if user types in "NaN" for either value?  "Infinity" or "-Infinity"?
-        // if (Double.isNaN(foo)) {...}
-        // if (Double.isInfinite(foo)) {...}
         double quotient = numerator / denominator;
 
         SwingUtilities.invokeLater(() -> {
@@ -106,7 +110,9 @@ public class App extends JFrame {
             //TODO what if I'm already on the EDT?
             // if (EventQueue.isDispatchThread()) {...}
             // HINT: notice that the button appears pressed in and never pops back out...it looks stuck...
-            calculate();
+            if (EventQueue.isDispatchThread()) {
+                calculate();
+            }
         });
     }
 
