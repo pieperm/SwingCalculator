@@ -4,10 +4,11 @@ import java.awt.*;
 public class App extends JFrame {
 
     private JPanel contentPanel;
-    private JTextField numeratorTextField;
-    private JTextField denominatorTextField;
-    private JButton divideButton;
-    private JLabel quotientLabel;
+    private JTextField firstNumberTextField;
+    private JTextField secondNumberTextField;
+    private OperationsPanel operationsPanel;
+    private JButton equalsButton;
+    private JLabel resultLabel;
 
     public App() {
         this.setSize(400, 300);
@@ -15,6 +16,19 @@ public class App extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         JFrame.setDefaultLookAndFeelDecorated(true);
         createAppContent();
+    }
+
+    private void createAppContent() {
+        firstNumberTextField = new JTextField(20);
+        secondNumberTextField = new JTextField(20);
+        operationsPanel = new OperationsPanel();
+        equalsButton = new JButton("=");
+        resultLabel = new JLabel("0");
+
+        contentPanel = new JPanel();
+        createAppLayout();
+        this.add(contentPanel);
+        createListeners();
     }
 
     private void createAppLayout() {
@@ -26,32 +40,52 @@ public class App extends JFrame {
         gridConstraints.gridx = 0;
         gridConstraints.gridy = 0;
         gridConstraints.gridwidth = 2;
-        contentPanel.add(numeratorTextField, gridConstraints);
+        contentPanel.add(firstNumberTextField, gridConstraints);
 
         gridConstraints.gridx = 0;
         gridConstraints.gridy = 1;
         gridConstraints.gridwidth = 2;
-        contentPanel.add(new JLabel("÷"), gridConstraints);
+        contentPanel.add(operationsPanel, gridConstraints);
 
         gridConstraints.gridx = 0;
         gridConstraints.gridy = 2;
         gridConstraints.gridwidth = 2;
-        contentPanel.add(denominatorTextField, gridConstraints);
+        contentPanel.add(secondNumberTextField, gridConstraints);
 
         gridConstraints.gridx = 0;
         gridConstraints.gridy = 3;
         gridConstraints.gridwidth = 1;
-        contentPanel.add(divideButton, gridConstraints);
+        contentPanel.add(equalsButton, gridConstraints);
 
         gridConstraints.gridx = 1;
         gridConstraints.gridy = 3;
         gridConstraints.gridwidth = 2;
-        contentPanel.add(quotientLabel, gridConstraints);
+        contentPanel.add(resultLabel, gridConstraints);
+    }
+
+    private void createListeners() {
+        equalsButton.addActionListener((event) -> {
+            //TODO what if I'm already on the EDT?
+            // if (EventQueue.isDispatchThread()) {...}
+            // HINT: notice that the button appears pressed in and never pops back out...it looks stuck...
+            if (EventQueue.isDispatchThread()) {
+                calculate();
+            }
+        });
+    }
+
+    private void displayError(String message, Object... args) {
+        SwingUtilities.invokeLater(() -> {
+            resultLabel.setForeground(Color.RED);
+            resultLabel.setText(String.format(message, args));
+        });
     }
 
     private void calculate() {
-        quotientLabel.setForeground(Color.GRAY);
-        quotientLabel.setText("...");
+        Operation selectedOperation = operationsPanel.getSelectedOperation();
+
+        resultLabel.setForeground(Color.GRAY);
+        resultLabel.setText("...");
 
         // artificial delay to simulate a longer calculation
         SwingUtilities.invokeLater(() -> {
@@ -62,70 +96,44 @@ public class App extends JFrame {
             }
         });
 
-        double numerator;
+        double firstNumber;
         try {
-            numerator = Double.parseDouble(numeratorTextField.getText());
+            firstNumber = Double.parseDouble(firstNumberTextField.getText());
         } catch (NumberFormatException e) {
-            SwingUtilities.invokeLater(() -> {
-                quotientLabel.setForeground(Color.RED);
-                quotientLabel.setText("Numerator is not a number");
-            });
+            displayError("First input is invalid");
             return;
         }
 
-        double denominator;
+        double secondNumber;
         try {
-            denominator = Double.parseDouble(denominatorTextField.getText());
+            secondNumber = Double.parseDouble(secondNumberTextField.getText());
         } catch (NumberFormatException e) {
-            SwingUtilities.invokeLater(() -> {
-                quotientLabel.setForeground(Color.RED);
-                quotientLabel.setText("Denominator is not a number");
-            });
+            displayError("Second input is invalid");
             return;
         }
 
-        if (denominator == 0d) {
-            SwingUtilities.invokeLater(() -> {
-                quotientLabel.setForeground(Color.RED);
-                quotientLabel.setText("Cannot divide by 0");
-            });
-            return;
-        }
-
-        double quotient = numerator / denominator;
-
-        SwingUtilities.invokeLater(() -> {
-            quotientLabel.setForeground(Color.BLACK);
-            quotientLabel.setText(String.valueOf(quotient));
-        });
-    }
-
-    private void createButtonListener() {
-        divideButton.addActionListener((event) -> {
-            if (numeratorTextField.getText().isBlank() || denominatorTextField.getText().isBlank()) {
-                SwingUtilities.invokeLater(() -> quotientLabel.setText(""));
+        double result;
+        switch (selectedOperation) {
+            case ADD -> result = firstNumber + secondNumber;
+            case SUBTRACT -> result = firstNumber - secondNumber;
+            case MULTIPLY -> result = firstNumber * secondNumber;
+            case DIVIDE -> {
+                if (secondNumber == 0d) {
+                    displayError("Cannot divide by 0");
+                    return;
+                }
+                result = firstNumber / secondNumber;
+            }
+            default -> {
+                displayError("Invalid operation %s", selectedOperation);
                 return;
             }
+        }
 
-            //TODO what if I'm already on the EDT?
-            // if (EventQueue.isDispatchThread()) {...}
-            // HINT: notice that the button appears pressed in and never pops back out...it looks stuck...
-            if (EventQueue.isDispatchThread()) {
-                calculate();
-            }
+        SwingUtilities.invokeLater(() -> {
+            resultLabel.setForeground(Color.BLACK);
+            resultLabel.setText(String.valueOf(result));
         });
-    }
-
-    private void createAppContent() {
-        numeratorTextField = new JTextField(20);
-        denominatorTextField = new JTextField(20);
-        divideButton = new JButton("=");
-        quotientLabel = new JLabel("0");
-
-        contentPanel = new JPanel();
-        createAppLayout();
-        createButtonListener();
-        this.add(contentPanel);
     }
 
     public static void main(String[] args) {
