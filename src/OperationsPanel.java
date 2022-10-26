@@ -9,7 +9,7 @@ public class OperationsPanel extends JPanel {
     private JButton divideButton;
     private JButton exponentButton;
     private ButtonGroup buttonGroup;
-    private Operation selectedOperation;
+    private Operation selectedOperation = Operation.NONE;
 
     public OperationsPanel() {
         super();
@@ -80,6 +80,11 @@ public class OperationsPanel extends JPanel {
 
     public Operation getSelectedOperation() {
         return selectedOperation;
+    }
+
+    public void clearSelectedOperation() {
+        this.selectedOperation = Operation.NONE;
+        buttonGroup.getSelection().setSelected(false);
     }
 
 }

@@ -79,6 +79,13 @@ public class App extends JFrame {
                 calculate();
             }
         });
+
+        clearButton.addActionListener((event) -> SwingUtilities.invokeLater(() -> {
+            firstNumberTextField.setText("");
+            secondNumberTextField.setText("");
+            operationsPanel.clearSelectedOperation();
+            resultLabel.setText("");
+        }));
     }
 
     private void displayError(String message, Object... args) {
@@ -133,7 +140,7 @@ public class App extends JFrame {
             }
             case EXPONENT -> result = Math.pow(firstNumber, secondNumber);
             default -> {
-                displayError("Invalid operation %s", selectedOperation);
+                displayError("No operation selected");
                 return;
             }
         }
