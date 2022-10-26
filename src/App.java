@@ -9,6 +9,7 @@ public class App extends JFrame {
     private OperationsPanel operationsPanel;
     private JButton equalsButton;
     private JLabel resultLabel;
+    private JButton clearButton;
 
     public App() {
         this.setSize(500, 300);
@@ -24,6 +25,7 @@ public class App extends JFrame {
         operationsPanel = new OperationsPanel();
         equalsButton = new JButton("=");
         resultLabel = new JLabel("0");
+        clearButton = new JButton("CLEAR");
 
         contentPanel = new JPanel();
         createAppLayout();
@@ -39,26 +41,31 @@ public class App extends JFrame {
         gridConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridConstraints.gridx = 0;
         gridConstraints.gridy = 0;
-        gridConstraints.gridwidth = 2;
-        contentPanel.add(firstNumberTextField, gridConstraints);
+        gridConstraints.gridwidth = 1;
+        contentPanel.add(clearButton, gridConstraints);
 
         gridConstraints.gridx = 0;
         gridConstraints.gridy = 1;
         gridConstraints.gridwidth = 2;
-        contentPanel.add(operationsPanel, gridConstraints);
+        contentPanel.add(firstNumberTextField, gridConstraints);
 
         gridConstraints.gridx = 0;
         gridConstraints.gridy = 2;
         gridConstraints.gridwidth = 2;
-        contentPanel.add(secondNumberTextField, gridConstraints);
+        contentPanel.add(operationsPanel, gridConstraints);
 
         gridConstraints.gridx = 0;
         gridConstraints.gridy = 3;
+        gridConstraints.gridwidth = 2;
+        contentPanel.add(secondNumberTextField, gridConstraints);
+
+        gridConstraints.gridx = 0;
+        gridConstraints.gridy = 4;
         gridConstraints.gridwidth = 1;
         contentPanel.add(equalsButton, gridConstraints);
 
         gridConstraints.gridx = 1;
-        gridConstraints.gridy = 3;
+        gridConstraints.gridy = 4;
         gridConstraints.gridwidth = 2;
         contentPanel.add(resultLabel, gridConstraints);
     }
