@@ -7,8 +7,9 @@ public class OperationsPanel extends JPanel {
     private JButton subtractButton;
     private JButton multiplyButton;
     private JButton divideButton;
+    private JButton exponentButton;
     private ButtonGroup buttonGroup;
-    private Operation selectedOperation;
+    private Operation selectedOperation = Operation.NONE;
 
     public OperationsPanel() {
         super();
@@ -22,12 +23,14 @@ public class OperationsPanel extends JPanel {
         subtractButton = new JButton("-");
         multiplyButton = new JButton("*");
         divideButton = new JButton("÷");
+        exponentButton = new JButton("^");
         buttonGroup = new ButtonGroup();
 
         buttonGroup.add(addButton);
         buttonGroup.add(subtractButton);
         buttonGroup.add(multiplyButton);
         buttonGroup.add(divideButton);
+        buttonGroup.add(exponentButton);
     }
 
     private void createLayout() {
@@ -53,6 +56,11 @@ public class OperationsPanel extends JPanel {
         gridConstraints.gridy = 0;
         gridConstraints.gridwidth = 1;
         this.add(divideButton, gridConstraints);
+
+        gridConstraints.gridx = 4;
+        gridConstraints.gridy = 0;
+        gridConstraints.gridwidth = 1;
+        this.add(exponentButton, gridConstraints);
     }
 
     private void createOperationListener(JButton button, Operation operation) {
@@ -67,10 +75,16 @@ public class OperationsPanel extends JPanel {
         createOperationListener(subtractButton, Operation.SUBTRACT);
         createOperationListener(multiplyButton, Operation.MULTIPLY);
         createOperationListener(divideButton, Operation.DIVIDE);
+        createOperationListener(exponentButton, Operation.EXPONENT);
     }
 
     public Operation getSelectedOperation() {
         return selectedOperation;
+    }
+
+    public void clearSelectedOperation() {
+        this.selectedOperation = Operation.NONE;
+        buttonGroup.getSelection().setSelected(false);
     }
 
 }
