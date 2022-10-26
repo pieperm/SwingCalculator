@@ -11,7 +11,7 @@ public class App extends JFrame {
     private JLabel resultLabel;
 
     public App() {
-        this.setSize(400, 300);
+        this.setSize(500, 300);
         this.setTitle("Calculator");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -124,6 +124,7 @@ public class App extends JFrame {
                 }
                 result = firstNumber / secondNumber;
             }
+            case EXPONENT -> result = Math.pow(firstNumber, secondNumber);
             default -> {
                 displayError("Invalid operation %s", selectedOperation);
                 return;
