@@ -70,6 +70,24 @@ public class App extends JFrame {
         contentPanel.add(resultLabel, gridConstraints);
     }
 
+    private void replaceSymbols(JTextField textField) {
+        Map<String, String> symbolMap = new HashMap<>();
+        symbolMap.put("pi", "π");
+        symbolMap.put("infinity", "∞");
+
+        String symbolString = textField.getText().toLowerCase();
+
+        for (String symbolText : symbolMap.keySet()) {
+            String symbol = symbolMap.get(symbolText);
+            symbolString = symbolString.replaceAll(symbolText, symbol);
+        }
+
+        final String textWithSymbols = symbolString;
+        if (!textField.getText().toLowerCase().equals(textWithSymbols)) {
+            SwingUtilities.invokeLater(() -> textField.setText(textWithSymbols));
+        }
+    }
+
     private void createListeners() {
         equalsButton.addActionListener((event) -> {
             //TODO what if I'm already on the EDT?
