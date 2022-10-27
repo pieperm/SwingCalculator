@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class App extends JFrame {
 
@@ -70,6 +72,24 @@ public class App extends JFrame {
         contentPanel.add(resultLabel, gridConstraints);
     }
 
+    private void replaceSymbols(JTextField textField) {
+        Map<String, String> symbolMap = new HashMap<>();
+        symbolMap.put("pi", "π");
+        symbolMap.put("infinity", "∞");
+
+        String symbolString = textField.getText().toLowerCase();
+
+        for (String symbolText : symbolMap.keySet()) {
+            String symbol = symbolMap.get(symbolText);
+            symbolString = symbolString.replaceAll(symbolText, symbol);
+        }
+
+        final String textWithSymbols = symbolString;
+        if (!textField.getText().toLowerCase().equals(textWithSymbols)) {
+            SwingUtilities.invokeLater(() -> textField.setText(textWithSymbols));
+        }
+    }
+
     private void createListeners() {
         equalsButton.addActionListener((event) -> {
             //TODO what if I'm already on the EDT?
@@ -86,6 +106,14 @@ public class App extends JFrame {
             operationsPanel.clearSelectedOperation();
             resultLabel.setText("");
         }));
+
+        firstNumberTextField.getDocument().addDocumentListener((InputChangeListener) e -> {
+            replaceSymbols(firstNumberTextField);
+        });
+
+        secondNumberTextField.getDocument().addDocumentListener((InputChangeListener) e -> {
+            replaceSymbols(secondNumberTextField);
+        });
     }
 
     private void displayError(String message, Object... args) {
@@ -93,6 +121,44 @@ public class App extends JFrame {
             resultLabel.setForeground(Color.RED);
             resultLabel.setText(String.format(message, args));
         });
+    }
+
+    private Double getValueWithCoefficient(String text, char symbol, double value) {
+        if (text.matches("^-?\\d*\\.?\\d*" + symbol + "$")) {
+            if (text.equals(String.valueOf(symbol))) {
+                return value;
+            } else if (text.equals("-" + symbol)) {
+                return -value;
+            }
+
+            String coefficientString = text.substring(0, text.length() - 1);
+            double coefficient = Double.parseDouble(coefficientString);
+            return coefficient * value;
+        }
+
+        return null;
+    }
+
+    private double getInputValue(JTextField textField) throws NumberFormatException {
+        final String text = textField.getText();
+
+        if (text.equals("∞")) {
+            return Double.POSITIVE_INFINITY;
+        } else if (text.equals("-∞")) {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        Double piValue = getValueWithCoefficient(text, 'π', Math.PI);
+        if (piValue != null) {
+            return piValue;
+        }
+
+        Double eValue = getValueWithCoefficient(text, 'e', Math.E);
+        if (eValue != null) {
+            return eValue;
+        }
+
+        return Double.parseDouble(textField.getText());
     }
 
     private void calculate() {
@@ -112,7 +178,7 @@ public class App extends JFrame {
 
         double firstNumber;
         try {
-            firstNumber = Double.parseDouble(firstNumberTextField.getText());
+            firstNumber = getInputValue(firstNumberTextField);
         } catch (NumberFormatException e) {
             displayError("First input is invalid");
             return;
@@ -120,7 +186,7 @@ public class App extends JFrame {
 
         double secondNumber;
         try {
-            secondNumber = Double.parseDouble(secondNumberTextField.getText());
+            secondNumber = getInputValue(secondNumberTextField);
         } catch (NumberFormatException e) {
             displayError("Second input is invalid");
             return;
@@ -145,9 +211,15 @@ public class App extends JFrame {
             }
         }
 
+        String resultString = String.valueOf(result);
+        if (Double.isInfinite(result)) {
+            resultString = result > 0 ? "∞" : "-∞";
+        }
+
+        final String resultDisplay = resultString;
         SwingUtilities.invokeLater(() -> {
             resultLabel.setForeground(Color.BLACK);
-            resultLabel.setText(String.valueOf(result));
+            resultLabel.setText(resultDisplay);
         });
     }
 
