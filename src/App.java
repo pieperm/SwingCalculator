@@ -123,6 +123,44 @@ public class App extends JFrame {
         });
     }
 
+    private Double getValueWithCoefficient(String text, char symbol, double value) {
+        if (text.matches("^-?\\d*\\.?\\d*" + symbol + "$")) {
+            if (text.equals(String.valueOf(symbol))) {
+                return value;
+            } else if (text.equals("-" + symbol)) {
+                return -value;
+            }
+
+            String coefficientString = text.substring(0, text.length() - 1);
+            double coefficient = Double.parseDouble(coefficientString);
+            return coefficient * value;
+        }
+
+        return null;
+    }
+
+    private double getInputValue(JTextField textField) throws NumberFormatException {
+        final String text = textField.getText();
+
+        if (text.equals("∞")) {
+            return Double.POSITIVE_INFINITY;
+        } else if (text.equals("-∞")) {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        Double piValue = getValueWithCoefficient(text, 'π', Math.PI);
+        if (piValue != null) {
+            return piValue;
+        }
+
+        Double eValue = getValueWithCoefficient(text, 'e', Math.E);
+        if (eValue != null) {
+            return eValue;
+        }
+
+        return Double.parseDouble(textField.getText());
+    }
+
     private void calculate() {
         Operation selectedOperation = operationsPanel.getSelectedOperation();
 
@@ -140,7 +178,7 @@ public class App extends JFrame {
 
         double firstNumber;
         try {
-            firstNumber = Double.parseDouble(firstNumberTextField.getText());
+            firstNumber = getInputValue(firstNumberTextField);
         } catch (NumberFormatException e) {
             displayError("First input is invalid");
             return;
@@ -148,7 +186,7 @@ public class App extends JFrame {
 
         double secondNumber;
         try {
-            secondNumber = Double.parseDouble(secondNumberTextField.getText());
+            secondNumber = getInputValue(secondNumberTextField);
         } catch (NumberFormatException e) {
             displayError("Second input is invalid");
             return;
