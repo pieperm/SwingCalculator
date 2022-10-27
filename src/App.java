@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class App extends JFrame {
 
@@ -104,6 +106,14 @@ public class App extends JFrame {
             operationsPanel.clearSelectedOperation();
             resultLabel.setText("");
         }));
+
+        firstNumberTextField.getDocument().addDocumentListener((InputChangeListener) e -> {
+            replaceSymbols(firstNumberTextField);
+        });
+
+        secondNumberTextField.getDocument().addDocumentListener((InputChangeListener) e -> {
+            replaceSymbols(secondNumberTextField);
+        });
     }
 
     private void displayError(String message, Object... args) {
