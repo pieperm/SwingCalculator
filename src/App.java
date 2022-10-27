@@ -211,9 +211,15 @@ public class App extends JFrame {
             }
         }
 
+        String resultString = String.valueOf(result);
+        if (Double.isInfinite(result)) {
+            resultString = result > 0 ? "∞" : "-∞";
+        }
+
+        final String resultDisplay = resultString;
         SwingUtilities.invokeLater(() -> {
             resultLabel.setForeground(Color.BLACK);
-            resultLabel.setText(String.valueOf(result));
+            resultLabel.setText(resultDisplay);
         });
     }
 
